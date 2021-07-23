@@ -1,0 +1,18 @@
+{
+  "name": "autoi18n",
+  "version": "1.0.6",
+  "main": "./loaders/index.js",
+  "license": "MIT",
+  "bin": {
+    "autoi18n": "./cli/bin/index.js"
+  },
+  "scripts": {},
+  "dependencies": {},
+  "devDependencies": {
+    "chalk": "^4.1.1",
+    "commander": "^8.0.0",
+    "glob": "^7.1.7",
+    "inquirer": "^8.1.1",
+    "prettier": "^2.3.2"
+  }
+}
