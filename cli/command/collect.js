@@ -1,5 +1,5 @@
-const fs = require('fs');
-const mergeIi8nConfig = require('../utils/mergeIi8nConfig');
+const fs = require('fs')
+const mergeIi8nConfig = require('../utils/mergeIi8nConfig')
 const log = require('../utils/log');
 const baseUtils = require('../utils/baseUtils')
 const { transform } = require('../../core/index')

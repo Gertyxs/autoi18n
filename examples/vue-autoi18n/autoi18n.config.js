@@ -56,14 +56,5 @@ module.exports = {
   /**
    * 哪些后缀文件需要注入 默认在所有js文件和script标签第一行注入
    */
-  i18nInstanceExt: ['.js'],
-  /**
-   * 格式化文件配置
-   */
-  prettier: {
-    parser: 'babel',
-    singleQuote: true,
-    trailingComma: 'es5',
-    endOfLine: 'lf',
-  }
+  i18nInstanceExt: ['.js']
 }
