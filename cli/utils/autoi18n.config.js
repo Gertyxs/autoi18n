@@ -52,16 +52,11 @@ module.exports = {
   /**
    * 国际化要注入到js里面的实例 会在js文件第一行注入
    */
-  i18nInstance: '',
-  /**
-   * 哪些后缀文件需要注入 默认在所有js文件和script标签第一行注入
-   */
-  i18nInstanceExt: ['.js'],
+  i18nInstance: "import i18n from '~/i18n'",
   /**
    * 格式化文件配置
    */
   prettier: {
-    parser: 'babel',
     singleQuote: true,
     trailingComma: 'es5',
     endOfLine: 'lf',

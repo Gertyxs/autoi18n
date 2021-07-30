@@ -10,7 +10,7 @@ const { replaceStatement } = require('./transform')
  * @param {*} 
  * @returns 
  */
-const makeVisitor = ({ code, options, messages, ext, codeType }) => {
+const makeVisitor = ({ options, messages, ext, codeType }) => {
   // 生成字符对象
   const StringLiteral = (value) => {
     return Object.assign(t.StringLiteral(value), { extra: { raw: `'${value}'`, rawValue: value } })
@@ -27,7 +27,7 @@ const makeVisitor = ({ code, options, messages, ext, codeType }) => {
       node.quasis = (node.quasis || []).map((item) => {
         if (item.type === 'TemplateElement') {
           if (baseUtils.isChinese(item.value.raw)) {
-            item.value.raw = `\${${replaceStatement({ code: item.value.raw, options, messages, ext, codeType })}}`
+            item.value.raw = `\${${replaceStatement({ value: item.value.raw, options, messages, ext, codeType })}}`
           }
         }
         return item
@@ -35,8 +35,8 @@ const makeVisitor = ({ code, options, messages, ext, codeType }) => {
       // 字符串模板占位符内容 占位符内容可以不用做处理
       node.expressions = (node.expressions || []).map((item) => {
         if (item.type === 'StringLiteral') {
-          if (baseUtils.isChinese(item.extra.raw)) {
-            // item.extra.raw = `${item.extra.raw}`
+          if (baseUtils.isChinese(item.value)) {
+            // item.extra.raw = `${item.value}`
           }
         }
         return item
@@ -48,16 +48,16 @@ const makeVisitor = ({ code, options, messages, ext, codeType }) => {
      */
     StringLiteral(path) {
       const { node } = path
-      if (baseUtils.isChinese(node.extra.raw)) {
+      if (baseUtils.isChinese(node.value)) {
         switch (path.parent.type) {
           case 'JSXAttribute':
             // 过滤掉这些属性不处理
             if (!options.ignoreTagAttr.includes(node.parent.name.name)) {
-              node.extra.raw = replaceStatement({ code: node.extra.raw, options, messages, ext, codeType })
+              node.extra.raw = replaceStatement({ value: node.value, options, messages, ext, codeType })
             }
             break
           default:
-            node.extra.raw = replaceStatement({ code: node.extra.raw, options, messages, ext, codeType })
+            node.extra.raw = replaceStatement({ value: node.value, options, messages, ext, codeType })
             break
         }
       }
@@ -68,8 +68,8 @@ const makeVisitor = ({ code, options, messages, ext, codeType }) => {
     */
     DirectiveLiteral(path) {
       const { node } = path
-      if (baseUtils.isChinese(node.extra.raw)) {
-        node.extra.raw = replaceStatement({ code: node.extra.raw, options, messages, ext, codeType })
+      if (baseUtils.isChinese(node.value)) {
+        node.extra.raw = replaceStatement({ value: node.value, options, messages, ext, codeType })
       }
     },
     /**
@@ -78,8 +78,8 @@ const makeVisitor = ({ code, options, messages, ext, codeType }) => {
      */
     JSXText(path) {
       const { node } = path
-      if (baseUtils.isChinese(node.extra.raw)) {
-        path.replaceWith(t.JSXExpressionContainer(StringLiteral(node.extra.raw)))
+      if (baseUtils.isChinese(node.value)) {
+        path.replaceWith(t.JSXExpressionContainer(StringLiteral(node.value)))
       }
       // path.skip() // 跳过子节点
     },

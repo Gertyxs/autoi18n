@@ -28,11 +28,11 @@ module.exports = {
    */
    injectInstance({ code, ext, options }) {
     // 如果存在需要注入的文件 进行注入
-    if (options.i18nInstanceExt && options.i18nInstanceExt.includes(ext)) {
+    if (options.i18nInstance) {
       const matchInstance = code.match(new RegExp(this.stringRegEscape(options.i18nInstance), 'gm'))
       // 如果已经存在实例直接返回
       if (matchInstance) return code
-      return `\n${options.i18nInstance}\n${code}`
+      return `${options.i18nInstance}\n${code.trim()}`
     }
     return code
   }

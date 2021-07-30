@@ -13,10 +13,10 @@ module.exports = {
   stash(sourceCode, options) {
     this.commentsCache = {}
     let commentsIndex = 0
-    sourceCode = sourceCode.replace(/<!--[\s\S]*?-->/gm, (match) => {
-      let commentsKey = `/%%comment_html_${commentsIndex++}%%/`
-      this.commentsCache[commentsKey] = match
-      return commentsKey
+    sourceCode = sourceCode.replace(/<!--([\s\S]*?)-->/gm, (match, content) => {
+      let commentsKey = `%%comment_html_${commentsIndex++}%%`
+      this.commentsCache[commentsKey] = content
+      return `<!--${commentsKey}-->`
     })
     return sourceCode
   },
@@ -24,7 +24,7 @@ module.exports = {
    * 恢复之前删除的注释
    */
   restore(sourceCode, options) {
-    sourceCode = sourceCode.replace(/\/%%comment_html_\d+%%\//gim, (match) => {
+    sourceCode = sourceCode.replace(/%%comment_html_\d+%%/gim, (match) => {
       return this.commentsCache[match]
     });
     this.commentsCache = {} // 清除缓存

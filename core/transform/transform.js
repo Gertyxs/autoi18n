@@ -47,7 +47,7 @@ const replaceStatement = ({ value, options, messages, ext, codeType, sign = '\''
   if (i18nMethod && typeof i18nMethod !== 'string') {
     return i18nMethod({ key, value, options, ext, sign })
   }
-  return `${options[i18nIdent]}(${sign}${key}${sign})`
+  return `${i18nMethod}(${sign}${key}${sign})`
 }
 
 /**

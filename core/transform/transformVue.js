@@ -82,6 +82,8 @@ const matchTagAttr = ({ code, options, ext, codeType, messages }) => {
       value = matchStringTpl({ code: value, options, messages, codeType, ext })
       // 进行字符串匹配替换
       value = matchString({ code: value, options, messages, codeType, ext })
+      // 替换属性为简写模式
+      attr = attr.replace('v-bind:', ':') 
       return `${attr}${sign}${value}${sign}`;
     });
     return `${startTag}${attrs}${endTag}`

@@ -1,7 +1,36 @@
+const fs = require('fs')
 const glob = require('glob')
 const path = require('path')
+const cwdPath = process.cwd()
 
 module.exports = {
+  /**
+   * 获取格式化配置
+   * @param ext 格式化文件后缀
+   * @param options 国际化配置
+   * @returns 格式配置
+   */
+  getPrettierOptions(ext, options) {
+    const filePath = path.join(cwdPath, '.prettierrc.js')
+    let prettier = {}
+    if (fs.existsSync(filePath)) {
+      try {
+        prettier = require(filePath)
+        prettier = { ...prettier, ...options.prettier }
+      } catch (err) {
+        prettier = options.prettier
+      }
+    }
+    let parser = 'babel'
+    if (ext === '.vue') {
+      parser = 'vue'
+    }
+    if (['.ts', '.tsx'].includes(ext)) {
+      parser = 'typescript'
+    }
+    prettier.parser = parser
+    return prettier
+  },
   /**
    * 合并国际化文件数据 如果内容一致不以旧的数据为主
    * @param oldMessages 国际化配置文件目录
