@@ -1,4 +1,4 @@
-const { md5 } = require('../utils/baseUtils')
+const { md5, formatWhitespace } = require('../utils/baseUtils')
 
 /**
  * 匹配字符串模块
@@ -28,6 +28,8 @@ const matchStringTpl = ({ code, options, messages, codeType, ext }) => {
  * @param {*} code 
  */
 const replaceStatement = ({ value, options, messages, ext, codeType, sign = '\'' }) => {
+  // 去掉首尾空白字符，中间的连续空白字符替换成一个空格
+  value = formatWhitespace(value)
   // 生成key
   let key = md5(value)
   // 是否自定义key

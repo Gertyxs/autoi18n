@@ -125,12 +125,13 @@ const matchTagContent = ({ code, options, ext, codeType, messages }) => {
 
 /**
  * @param {*} options.code 源代码 
+ * @param {*} options.file 文件对象 
  * @param {*} options.options 国际化配置对象 
  * @param {*} options.messages 国际化字段对象 
  * @param {*} options.ext 文件类型 
  * @returns 
  */
-module.exports = function ({ code, options, ext = '.vue', messages }) {
+module.exports = function ({ code, file, options, ext = '.vue', messages }) {
   // 解析vue单文件组织
   const sfc = compiler.parseComponent(code, { pad: 'space', deindent: false })
 

@@ -26,7 +26,7 @@ module.exports = {
    * 注入国际化实例
    * @param options 国际化配置对象
    */
-   injectInstance({ code, ext, options }) {
+  injectInstance({ code, ext, options }) {
     // 如果存在需要注入的文件 进行注入
     if (options.i18nInstance) {
       const matchInstance = code.match(new RegExp(this.stringRegEscape(options.i18nInstance), 'gm'))
@@ -35,5 +35,11 @@ module.exports = {
       return `${options.i18nInstance}\n${code.trim()}`
     }
     return code
+  },
+  /**
+   * 去掉首尾空白字符，中间的连续空白字符替换成一个空格
+   */
+  formatWhitespace(str) {
+    return str.trim().replace(/\s+/g, ' ')
   }
 }

@@ -4,6 +4,7 @@ const traverse = require('@babel/traverse').default
 const t = require('@babel/types')
 const baseUtils = require('../utils/baseUtils')
 const { replaceStatement } = require('./transform')
+const log = require('../../cli/utils/log')
 
 /**
  * 返回处理ast对象
@@ -105,7 +106,7 @@ const makeVisitor = ({ options, messages, ext, codeType }) => {
   }
 }
 
-module.exports = function ({ code, options, messages, ext, codeType }) {
+module.exports = function ({ code, file, options, messages, ext, codeType }) {
   // 生成ast配置
   const transformOptions = {
     sourceType: 'module', // 是否使用模块解析文件
@@ -117,7 +118,12 @@ module.exports = function ({ code, options, messages, ext, codeType }) {
     ]
   }
   // 生成ast树
-  const ast = parser.parse(code, transformOptions)
+  let ast = null
+  try {
+    ast = parser.parse(code, transformOptions)
+  } catch (error) {
+    log.error(`文件${file.filePath} babel ast解析失败`)
+  }
   // 返回转换对象
   const visitor = makeVisitor({ code, options, messages, ext, codeType })
   // 开始转换
