@@ -15,3 +15,8 @@ ReactDOM.render(
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
+
+var a = '艾尔'
+let b = "投入"
+const c = `功夫兔`
+let d = `是的法规 ${ true ? 'rt不过' : 'ssss'}`
