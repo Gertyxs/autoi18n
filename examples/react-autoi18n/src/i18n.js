@@ -1,28 +1,31 @@
-import i18n from "i18next"
+import i18next from "i18next"
 import { initReactI18next, useTranslation } from "react-i18next"
 
 const resources = {}
-const files = require.context('./loaders', true, /\.json$/)
+const files = require.context("./locales", true, /\.json$/);
 
 files.keys().forEach((key) => {
-  const name = key.replace(/^\.\/(.*)\.\w+$/, '$1')
-  resources[name] = { translation: files(key).default }
-})
+  const name = key.replace(/^\.\/(.*)\.\w+$/, "$1");
+  resources[name] = { translation: files(key) };
+});
 
-// 导出方法
-const t = useTranslation()
-
-i18n
+i18next
   .use(initReactI18next) // passes i18n down to react-i18next
   .init({
     resources,
-    lng: "zh-cn", // language to use, more information here: https://www.i18next.com/overview/configuration-options#languages-namespaces-resources
+    lng: "cn", // language to use, more information here: https://www.i18next.com/overview/configuration-options#languages-namespaces-resources
     // you can use the i18n.changeLanguage function to change the language manually: https://www.i18next.com/overview/api#changelanguage
     // if you're using a language detector, do not define the lng option
 
     interpolation: {
-      escapeValue: false // react already safes from xss
-    }
+      escapeValue: false, // react already safes from xss
+    },
   });
 
-export default { i18n, t }
+
+
+export const i18n = i18next
+export const intl = function Intl(...rest) {
+  const { t } = useTranslation()
+  return t(...rest)
+}
