@@ -1,7 +1,20 @@
-const parser = require('@babel/parser')
+const babel = require('@babel/core')
 const generate = require('@babel/generator').default
 const traverse = require('@babel/traverse').default
+const presetTypescript = require('@babel/preset-typescript').default
 const t = require('@babel/types')
+
+const pluginSyntaxJSX = require('@babel/plugin-syntax-jsx');
+const pluginSyntaxProposalOptionalChaining = require('@babel/plugin-proposal-optional-chaining');
+const pluginSyntaxClassProperties = require('@babel/plugin-syntax-class-properties');
+const pluginSyntaxDecorators = require('@babel/plugin-syntax-decorators');
+const pluginSyntaxObjectRestSpread = require('@babel/plugin-syntax-object-rest-spread');
+const pluginSyntaxAsyncGenerators = require('@babel/plugin-syntax-async-generators');
+const pluginSyntaxDoExpressions = require('@babel/plugin-syntax-do-expressions');
+const pluginSyntaxDynamicImport = require('@babel/plugin-syntax-dynamic-import');
+const pluginSyntaxExportExtensions = require('@babel/plugin-syntax-export-extensions');
+const pluginSyntaxFunctionBind = require('@babel/plugin-syntax-function-bind');
+
 const baseUtils = require('../utils/baseUtils')
 const { replaceStatement } = require('./transform')
 const log = require('../../cli/utils/log')
@@ -106,23 +119,33 @@ const makeVisitor = ({ options, messages, ext, codeType }) => {
   }
 }
 
-module.exports = function ({ code, file, options, messages, ext, codeType }) {
+module.exports = function ({ code, file, options, messages, ext, codeType, lang = 'js' }) {
   // 生成ast配置
   const transformOptions = {
     sourceType: 'module', // 是否使用模块解析文件
     ast: true, // 是否生成ast树
     configFile: false, // 是否应用babel配置文件配置
+    presets: lang === 'ts' ? [ [presetTypescript, { isTSX: true, allExtensions: true }]] : [],
     plugins: [
-      'jsx',
-      'typescript',
+      pluginSyntaxJSX,
+      pluginSyntaxProposalOptionalChaining,
+      pluginSyntaxClassProperties,
+      [pluginSyntaxDecorators, { decoratorsBeforeExport: true }],
+      pluginSyntaxObjectRestSpread,
+      pluginSyntaxAsyncGenerators,
+      pluginSyntaxDoExpressions,
+      pluginSyntaxDynamicImport,
+      pluginSyntaxExportExtensions,
+      pluginSyntaxFunctionBind,
     ]
   }
   // 生成ast树
   let ast = null
   try {
-    ast = parser.parse(code, transformOptions)
+    ast = babel.parseSync(code, transformOptions)
   } catch (error) {
     log.error(`文件${file.filePath} babel ast解析失败`)
+    console.log(code)
   }
   // 返回转换对象
   const visitor = makeVisitor({ code, options, messages, ext, codeType })

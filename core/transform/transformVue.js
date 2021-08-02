@@ -83,7 +83,7 @@ const matchTagAttr = ({ code, options, ext, codeType, messages }) => {
       // 进行字符串匹配替换
       value = matchString({ code: value, options, messages, codeType, ext })
       // 替换属性为简写模式
-      attr = attr.replace('v-bind:', ':') 
+      attr = attr.replace('v-bind:', ':')
       return `${attr}${sign}${value}${sign}`;
     });
     return `${startTag}${attrs}${endTag}`
@@ -156,7 +156,8 @@ module.exports = function ({ code, file, options, ext = '.vue', messages }) {
 
   // 处理js
   if (script) {
-    const code = transformJs({ code: script.content, options, ext, codeType: 'vueJs', messages })
+    const lang = script.attrs.lang || 'js'
+    const code = transformJs({ code: script.content, file, options, ext, codeType: 'vueJs', messages, lang })
     script.content = code
   }
 

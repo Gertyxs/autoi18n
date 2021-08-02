@@ -19,7 +19,8 @@ module.exports = function ({ code, file, options, messages, ext = '.jsx' }) {
   // 暂存已经设置的国际化字段
   code = cacheI18nField.stash(code, options)
   // 转换react
-  code = ast({ code, file, options, messages, ext, codeType: 'jsx' })
+  const lang = ['.ts', '.tsx'].includes(ext) ? 'ts' : 'js'
+  code = ast({ code, file, options, messages, ext, codeType: 'jsx', lang })
   // 恢复注释
   code = cacheCommentJs.restore(code, options)
   // 恢复已经设置的国际化字段

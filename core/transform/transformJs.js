@@ -12,19 +12,20 @@ const baseUtils = require('../utils/baseUtils')
  * @param {*} options.ext 文件类型 
  * @returns 
  */
-module.exports = function ({ code, file, options, messages, codeType = 'js', ext = '.js' }) {
+module.exports = function ({ code, file, options, messages, lang, codeType = 'js', ext = '.js' }) {
   // 复制一份国际化数据配置
   const oldMessages = JSON.stringify(messages)
   // 暂存注释
-  // code = cacheCommentJs.stash(code, options)
+  code = cacheCommentJs.stash(code, options)
   // 暂存已经设置的国际化字段
-  // code = cacheI18nField.stash(code, options)
+  code = cacheI18nField.stash(code, options)
   // 转换js
-  code = ast({ code, file, options, messages, ext, codeType })
+  lang = lang ? lang : ext === '.ts' ? 'ts' : 'js'
+  code = ast({ code, file, options, messages, ext, codeType, lang })
   // 恢复注释
-  // code = cacheCommentJs.restore(code, options)
+  code = cacheCommentJs.restore(code, options)
   // 恢复已经设置的国际化字段
-  // code = cacheI18nField.restore(code, options)
+  code = cacheI18nField.restore(code, options)
   // 国际化数据发生变化才注入 证明该js有国际化字段
   if (oldMessages !== JSON.stringify(messages)) {
     // 注入实例
