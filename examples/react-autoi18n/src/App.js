@@ -1,12 +1,8 @@
 import logo from './logo.svg';
 import './App.css';
-import { useTranslation } from "react-i18next"
+import { in8n, changeLang } from '~/i18n'
 
 function App() {
-  const { i18n } = useTranslation()
-  const setLanguage = (e) => {
-    return i18n.changeLanguage(e.target.value)
-  }
   return (
     <div className="App">
       <header className="App-header">
@@ -23,9 +19,9 @@ function App() {
           Learn React
         </a>
         <h1>欢迎使用 autoi8n </h1>
-        <select onChange={setLanguage}>
-          <option value="cn">中文</option>
-          <option value="en">英文</option>
+        <select onChange={changeLang}>
+          <option value="cn-us">中文</option>
+          <option value="zh-en">英文</option>
         </select>
       </header>
     </div>
@@ -33,3 +29,4 @@ function App() {
 }
 
 export default App;
+

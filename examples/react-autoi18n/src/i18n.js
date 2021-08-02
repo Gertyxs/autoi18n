@@ -1,31 +1,24 @@
-import i18next from "i18next"
-import { initReactI18next, useTranslation } from "react-i18next"
+import intl from 'react-intl-universal'
 
-const resources = {}
+const locales = {};
 const files = require.context("./locales", true, /\.json$/);
 
 files.keys().forEach((key) => {
   const name = key.replace(/^\.\/(.*)\.\w+$/, "$1");
-  resources[name] = { translation: files(key) };
-});
+  locales[name] = files(key)
+})
 
-i18next
-  .use(initReactI18next) // passes i18n down to react-i18next
-  .init({
-    resources,
-    lng: "cn", // language to use, more information here: https://www.i18next.com/overview/configuration-options#languages-namespaces-resources
-    // you can use the i18n.changeLanguage function to change the language manually: https://www.i18next.com/overview/api#changelanguage
-    // if you're using a language detector, do not define the lng option
+const currentLocale = window.localStorage.getItem('lang') || 'zh-cn'
 
-    interpolation: {
-      escapeValue: false, // react already safes from xss
-    },
-  });
+intl.init({
+  currentLocale,
+  locales,
+})
 
-
-
-export const i18n = i18next
-export const intl = function Intl(...rest) {
-  const { t } = useTranslation()
-  return t(...rest)
+//  切换语言
+export const changeLang = (lang) => {
+  window.localStorage.setItem('lang', lang)
+  window.location.reload()
 }
+
+export const i18n = intl
