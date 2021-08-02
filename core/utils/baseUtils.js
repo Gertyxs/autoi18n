@@ -16,6 +16,20 @@ module.exports = {
     return md5(value).toString()
   },
   /**
+   * 匹配是否导入某个模块 es6 模式
+   * @param moduleName 模块名称
+   */
+  // matchImportModule(moduleName) {
+  //   return new RegExp(`(import\\s+(?:(?:\\w+|{(?:\\s*\\w\\s*,?\\s*)+})\\s+from)?\\s*['"\`](${moduleName}+?)['"\`])`, 'gm');
+  // },
+  /**
+   * 匹配是否导入某个模块 commonjs 模式
+   * @param moduleName 模块名称
+   */
+  // matchRequireModule(moduleName) {
+  //   return new RegExp(`(?:var|let|const)\\s+(?:(?:\\w+|{(?:\\s*\\w\\s*,?\\s*)+}))\\s*=\\s*require\\s*\\(\\s*['"\`](${moduleName}+?)['"\`]\\s*\\)`, 'gm');
+  // },
+  /**
    * 字符串正则转义
    * @param value 加密参数
    */

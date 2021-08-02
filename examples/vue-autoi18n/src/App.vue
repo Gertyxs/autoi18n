@@ -1,27 +1,30 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    地方法规的
-    <div>{{true ? '是的法规' : `招待费`}} {{`${'sds三个'}`}}</div>
-    <div aa="sdfg水电费" :bbb="'规划局'"></div>
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <h1>{{ $t('1457a8cf081b42e8461e210209b9661c') }}</h1>
+    <select @change="setLanguage" :value="lang">
+      <option value="zh-cn">{{ $t('a7bac2239fcdcb3a067903d8077c4a07') }}</option>
+      <option value="en-us">{{ $t('f9fb6a063d1856da86a06def2dc6b921') }}</option>
+    </select>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import i18n from '@/i18n'
 export default {
   name: 'App',
-  components: {
-    HelloWorld
+  data() {
+    return {
+      lang: 'zh-cn',
+    }
   },
-  created () {
-    var a = '阿凡达'
-    let b = `dsf视图`
-    const c = `${'大师法规规范化'}`
-    let d = `${true ? '电饭锅和' : 'sdf'}`
-  }
+  components: {},
+  created() {},
+  methods: {
+    setLanguage(e) {
+      this.lang = e.target.value
+      i18n.locale = this.lang
+    },
+  },
 }
 </script>
 

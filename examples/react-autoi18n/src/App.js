@@ -1,13 +1,17 @@
-import logo from './logo.svg';
-import './App.css';
-import { in8n, changeLang } from '~/i18n'
+import { i18n } from "~/i18n";
+import logo from "./logo.svg";
+import "./App.css";
+import { changeLang } from "~/i18n";
 
 function App() {
+  const setLanguage = (e) => {
+    changeLang(e.target.value)
+  }
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p aa={'豆腐干'} bb="asd是的法规">
+        <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
         <a
@@ -18,10 +22,10 @@ function App() {
         >
           Learn React
         </a>
-        <h1>欢迎使用 autoi8n </h1>
-        <select onChange={changeLang}>
-          <option value="cn-us">中文</option>
-          <option value="zh-en">英文</option>
+        <h1>{i18n.get("1457a8cf081b42e8461e210209b9661c")}</h1>
+        <select onChange={setLanguage} value={window.localStorage.getItem("lang")}>
+          <option value="zh-cn">{i18n.get('a7bac2239fcdcb3a067903d8077c4a07')}</option>
+          <option value="en-us">{i18n.get('f9fb6a063d1856da86a06def2dc6b921')}</option>
         </select>
       </header>
     </div>
@@ -29,4 +33,3 @@ function App() {
 }
 
 export default App;
-

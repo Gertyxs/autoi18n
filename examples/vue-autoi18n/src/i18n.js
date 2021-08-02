@@ -4,17 +4,17 @@ import VueI18n from 'vue-i18n'
 Vue.use(VueI18n)
 
 const messages = {}
-const files = require.context('./loaders', true, /\.json$/)
+const files = require.context('./locales', true, /\.json$/)
 
 files.keys().forEach((key) => {
   const name = key.replace(/^\.\/(.*)\.\w+$/, '$1')
-  messages[name] = files(key).default
+  messages[name] = files(key)
 })
 
 const i18n = new VueI18n({
   locale: 'zh-cn',
   fallbackLocale: 'zh-cn',
-  messages
+  messages,
 })
 
 export default i18n
