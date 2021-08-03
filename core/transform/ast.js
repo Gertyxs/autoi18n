@@ -75,6 +75,7 @@ const makeVisitor = ({ options, messages, ext, codeType }) => {
             break
         }
       }
+      path.skip() // 跳过子节点
     },
     /**
     * 处理 指令字符串字面量 'asdf'

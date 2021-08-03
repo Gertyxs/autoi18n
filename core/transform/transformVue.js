@@ -103,7 +103,7 @@ const matchTagContent = ({ code, options, ext, codeType, messages }) => {
       value = value.replace(item, (value) => {
         // 是否是中文
         if (/[\u4e00-\u9fa5]+/g.test(value)) {
-          value = `{{${JSON.stringify(value)}}}`
+          value = `{{'${value.trim()}'}}`
         }
         return value
       })
@@ -115,9 +115,9 @@ const matchTagContent = ({ code, options, ext, codeType, messages }) => {
       value = matchStringTpl({ code: value, options, messages, codeType, ext })
       // 进行字符串匹配替换
       value = matchString({ code: value, options, messages, codeType, ext })
-      return `${beforeSign}${value}${afterSign}`
+      return `${beforeSign}${value.trim()}${afterSign}`
     })
-    return `${beforeSign}${value}${afterSign}`
+    return `${beforeSign}${value.trim()}${afterSign}`
   })
   return code
 }

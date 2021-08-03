@@ -8,7 +8,7 @@ files.keys().forEach((key) => {
   locales[name] = files(key);
 });
 
-const currentLocale = window.localStorage.getItem("lang") || "zh-cn"
+const currentLocale = window.localStorage.getItem("lang") || "zh-cn";
 intl.init({
   currentLocale,
   locales,

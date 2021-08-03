@@ -57,7 +57,7 @@ module.exports = class LocaleFile {
       content = (content || '').match(/\{[\s\S]*\}/)
       content = content ? content[0] : {}
       // 将key value的单引号换成双引号 防止json格式化失败
-      content = content.replace(/(['"]?)(\w+)\1\s*:\s*(['"]?)(((?!,)(.|\n|\r))+)\3/gm, (match, keySign, key, valueSign, value) => {
+      content = content.replace(/(['"]?)(\w+)\1\s*:\s*(['"]?)(((?!,|\3)(.|\n|\r))+)\3/gm, (match, keySign, key, valueSign, value) => {
         value = valueSign ? `"${value}"` : value
         return `"${key}": ${value}`
       })
