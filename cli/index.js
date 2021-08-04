@@ -37,9 +37,4 @@ program
     console.log('    $ autoi18n sync')
   })
 
-// 如果找不到命令提示
-program.command('*').action(function (cmd) {
-  console.log('unknown command "%s"', cmd)
-})
-
 program.parse(process.argv)

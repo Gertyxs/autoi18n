@@ -4,6 +4,22 @@ const log = require('./log')
 
 const cwdPath = process.cwd()
 
+/**
+ * 同步创建多级文件夹
+ * @param {*} dirname 文件名
+ * @returns 
+ */
+const mkdirMultipleSync = (dirname) => {
+  if (fs.existsSync(dirname)) {
+    return true
+  } else {
+    if (mkdirMultipleSync(path.dirname(dirname))) {
+      fs.mkdirSync(dirname)
+      return true
+    }
+  }
+}
+
 module.exports = class LocaleFile {
   constructor(folder) {
     this.localesDir = folder
@@ -21,11 +37,10 @@ module.exports = class LocaleFile {
         ? this.localesDir
         : path.join(cwdPath, this.localesDir)
     );
-
     try {
-      fs.accessSync(folder);
+      fs.accessSync(folder)
     } catch (e) {
-      fs.mkdirSync(folder);
+      mkdirMultipleSync(folder)
     }
     const localeFileExt = options.localeFileExt || '.json'
     const configFilePath = path.join(folder, `${locale}${localeFileExt}`);
