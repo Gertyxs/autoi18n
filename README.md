@@ -17,9 +17,9 @@
 ## 安装
 
 ```bash
-npm i -D autoi18n
+npm i -D autoi18n-tool
 
-yarn add -D autoi18n
+yarn add -D autoi18n-tool
 ```
 
 ## 使用

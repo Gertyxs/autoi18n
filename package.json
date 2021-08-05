@@ -1,5 +1,5 @@
 {
-  "name": "autoi18n",
+  "name": "autoi18n-tool",
   "version": "1.0.0",
   "main": "./loaders/index.js",
   "license": "MIT",
@@ -7,8 +7,8 @@
     "autoi18n": "./cli/bin/index.js"
   },
   "keywords": [
-    "webpack",
-    "vue-i18n-loader"
+    "autoi18n",
+    "autoi18n-tool"
   ],
   "repository": {
     "url": "https://github.com/Gertyxs/autoi18n/tree/main"

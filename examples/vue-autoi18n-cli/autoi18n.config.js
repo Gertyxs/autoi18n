@@ -1,0 +1,16 @@
+module.exports = {
+  language: ['zh-cn', 'en-us'],
+  modules: 'es6',
+  entry: ['./src'],
+  localePath: './src/locales',
+  localeFileExt: '.json',
+  extensions: [],
+  exclude: [],
+  ignoreMethods: ['i18n.t', '$t'],
+  ignoreTagAttr: ['class', 'style', 'src', 'href', 'width', 'height'],
+  i18nObjectMethod: 'i18n.t',
+  i18nMethod: '$t',
+  setMessageKey: false,
+  i18nInstance: "import i18n from '@/i18n'",
+  prettier: { singleQuote: true, trailingComma: 'es5', endOfLine: 'lf' },
+};
