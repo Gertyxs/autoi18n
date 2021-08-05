@@ -103,6 +103,14 @@ module.exports = {
 }
 ```
 
+**页面在中文下展示为**
+
+你好世界
+
+**在英文下展示为**
+
+Hello, world
+
 ## 组成部分
 
 > 该库分为两部分，一部分是cli，目的是通过命令生成资源文件和替换源文件的国际化字段，另一部分是webpack loader，目的是无侵入式的替换源文件的国际化字段，我们最好在打包测试/上线前执行以下cli命令，生成资源文件，然后拷贝一份资源文件给翻译组进行各国语言的翻译
@@ -119,22 +127,72 @@ npx autoi18n -V # 查看版本
 
 执行`npx autoi18n init`会在项目根目录生成`autoi8n.config.js`配置文件
 
-| 选项      | 类型   |       默认值       |     描述                             |
-| :------- | ------ | :----------------- | :----------------------------------------------------------- |
-| language&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Array&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | ['zh-cn', 'en-us']&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |                  需要国际化的语言种类的数组                  |
-| modules  | String |        es6         | 国际化资源文件应用的模块模式根据这个模式使用 module.exports或者export default,如果localeFileExt配置为json时 此配置不起效 |
-| entry | Array | ['./src'] | 需要国际化的目录数组 |
-| localePath | String | './src/locales' | 国际化资源文件输出目录 |
-| localeFileExt | String | .json | 国际化文件类型 默认 为 .json文件 支持.js和.json |
-| extensions | Array | [] | 需要处理国际化的文件后缀,默认会处理js、ts、tsx、jsx、vue |
-| exclude | Array | [] | 需要排除国际化的文件 glob模式数组,默认会排除资源文件目录 |
-| ignoreMethods | Array | ['i18n.t', '$t'] | 要忽略做国际化的方法 |
-| ignoreTagAttr | Array | ['class', 'style', 'src', 'href', 'width', 'height'] | 要忽略做标签属性 |
-| i18nObjectMethod | String | i18n.t | 国际化对象方法，可以自定义使用方法返回 注意：如果改变国际化方法记得把该方法加到ignoreMethods忽略列表里面 |
-| i18nMethod | String | $t | 国际化方法简写模式，可以自定使用方法返回 注意：如果改变国际化方法记得把该方法加到ignoreMethods忽略列表里面 |
-| setMessageKey | String \| Function |  | 如果不喜欢又臭又长的key 可以自定义国际化配置文件的key,默认为 false 不自定义 |
-| i18nInstance | String | import i18n from '~/i18n' | 国际化要注入到js里面的实例 会在js文件第一行注入 |
-| prettier | Object | {    singleQuote: true,    trailingComma: 'es5',    endOfLine: 'lf' } | prettier 格式化文件配置 |
+```js
+module.exports = {
+  /**
+   * 需要国际化的语言种类
+   */
+  language: ['zh-cn', 'en-us'],
+  /**
+   * 国际化资源文件应用的 模块模式 根据这个模式 使用 module.exports 或者 export default
+   * 如果localeFileExt 配置为json时 此配置不起效
+   */
+  modules: 'es6',
+  /**
+   * 需要国际化的目录
+   */
+  entry: ['./src'],
+  /**
+   * 国际化资源文件输出目录
+   */
+  localePath: './src/locales',
+  /**
+   * 国际化文件类型 默认 为 .json文件 支持.js和.json
+   */
+  localeFileExt: '.json',
+  /**
+   * 需要处理国际化的文件后缀
+   */
+  extensions: [],
+  /**
+   * 需要排除国际化的文件 glob模式数组
+   */
+  exclude: [],
+  /**
+   * 要忽略做国际化的方法
+   */
+  ignoreMethods: ['i18n.t', '$t'],
+  /**
+   * 要忽略做标签属性
+   */
+  ignoreTagAttr: ['class', 'style', 'src', 'href', 'width', 'height'],
+  /**
+   * 国际化对象方法，可以自定义使用方法返回 注意：如果改变国际化方法记得把该方法加到ignoreMethods忽略列表里面
+   */
+  i18nObjectMethod: 'i18n.t',
+  /**
+   * 国际化方法简写模式，可以自定使用方法返回 注意：如果改变国际化方法记得把该方法加到ignoreMethods忽略列表里面
+   */
+  i18nMethod: '$t',
+  /**
+   * 如果不喜欢又臭又长的key 可以自定义国际化配置文件的key 
+   * 默认为 false 不自定义 
+   */
+  setMessageKey: false,
+  /**
+   * 国际化要注入到js里面的实例 会在js文件第一行注入
+   */
+  i18nInstance: "import i18n from '~/i18n'",
+  /**
+   * 格式化文件配置
+   */
+  prettier: {
+    singleQuote: true,
+    trailingComma: 'es5',
+    endOfLine: 'lf',
+  }
+}
+```
 
 ### webpack loader
 
