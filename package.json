@@ -1,11 +1,19 @@
 {
   "name": "autoi18n",
-  "version": "1.0.6",
+  "version": "1.0.0",
   "main": "./loaders/index.js",
   "license": "MIT",
   "bin": {
     "autoi18n": "./cli/bin/index.js"
   },
+  "keywords": [
+    "webpack",
+    "vue-i18n-loader"
+  ],
+  "repository": {
+    "url": "https://github.com/Gertyxs/autoi18n/tree/main"
+  },
+  "author": "Gertyxs <gertyxs@outlook.com>",
   "scripts": {},
   "dependencies": {},
   "devDependencies": {
