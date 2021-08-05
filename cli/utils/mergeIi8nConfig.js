@@ -14,7 +14,7 @@ module.exports = function mergeOptions(programOption) {
   if (fs.existsSync(configFilePath)) {
     let configurationFile = {}
     try {
-      configurationFile = require(configFilePath);
+      configurationFile = require(configFilePath)
     } catch (err) {
       log.warning(`请检查 ${configFileName} 配置文件是否正确\n`)
     }

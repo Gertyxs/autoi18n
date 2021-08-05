@@ -1,12 +1,28 @@
-const fs = require('fs');
-const path = require('path');
-const log = require('./log');
+const fs = require('fs')
+const path = require('path')
+const log = require('./log')
 
-const cwdPath = process.cwd();
+const cwdPath = process.cwd()
+
+/**
+ * 同步创建多级文件夹
+ * @param {*} dirname 文件名
+ * @returns 
+ */
+const mkdirMultipleSync = (dirname) => {
+  if (fs.existsSync(dirname)) {
+    return true
+  } else {
+    if (mkdirMultipleSync(path.dirname(dirname))) {
+      fs.mkdirSync(dirname)
+      return true
+    }
+  }
+}
 
 module.exports = class LocaleFile {
   constructor(folder) {
-    this.localesDir = folder;
+    this.localesDir = folder
   }
 
   /**
@@ -21,11 +37,10 @@ module.exports = class LocaleFile {
         ? this.localesDir
         : path.join(cwdPath, this.localesDir)
     );
-
     try {
-      fs.accessSync(folder);
+      fs.accessSync(folder)
     } catch (e) {
-      fs.mkdirSync(folder);
+      mkdirMultipleSync(folder)
     }
     const localeFileExt = options.localeFileExt || '.json'
     const configFilePath = path.join(folder, `${locale}${localeFileExt}`);
@@ -53,17 +68,16 @@ module.exports = class LocaleFile {
     let data = {}
     if (fs.existsSync(configFilePath)) {
       let content = fs.readFileSync(configFilePath, { encoding: 'utf-8' })
-      content = (content || '').replace(/export\s+default\s*/, '').replace(/module\.exports\s*=\s*/, '')
-      // 将key的单引号换成双引号 防止json格式化失败
-      content = content.replace(/'([^']+)'(\s*:)/gm, (match, value, identity) => {
-        return `"${value}"${identity}`
-      })
-      // 将内容的单引号换成双引号 防止json格式化失败
-      content = content.replace(/(:\s*)'([^']+)'/gm, (match, identity, value) => {
-        return `${identity}"${value}"`
+      // 匹配大括号里面的内容
+      content = (content || '').match(/\{[\s\S]*\}/)
+      content = content ? content[0] : {}
+      // 将key value的单引号换成双引号 防止json格式化失败
+      content = content.replace(/(['"]?)(\w+)\1\s*:\s*(['"]?)(((?!,|\3)(.|\n|\r))+)\3/gm, (match, keySign, key, valueSign, value) => {
+        value = valueSign ? `"${value}"` : value
+        return `"${key}": ${value}`
       })
       data = content.length > 0 ? JSON.parse(content) : {}
     }
-    return {}
+    return data
   }
 }

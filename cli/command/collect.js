@@ -1,6 +1,7 @@
-const fs = require('fs');
-const mergeIi8nConfig = require('../utils/mergeIi8nConfig');
-const log = require('../utils/log');
+const fs = require('fs')
+const mergeIi8nConfig = require('../utils/mergeIi8nConfig')
+const prettier = require('prettier')
+const log = require('../utils/log')
 const baseUtils = require('../utils/baseUtils')
 const { transform } = require('../../core/index')
 const LocaleFile = require('../utils/localeFile')
@@ -34,8 +35,9 @@ module.exports = async function (programOption) {
   // 开始读取文件进行操作
   for (let i = 0; i < targetFiles.length; i++) {
     const sourceCode = fs.readFileSync(targetFiles[i].filePath, 'utf8');
-    const code = transform({ code: sourceCode, targetFile: targetFiles[i], options, messages })
+    let code = transform({ code: sourceCode, targetFile: targetFiles[i], options, messages })
     if (programOption.replace) {
+      code = prettier.format(code, baseUtils.getPrettierOptions(targetFiles[i].ext, options))
       fs.writeFileSync(targetFiles[i].filePath, code, { encoding: 'utf-8' })
     }
     log.success(`done: ${targetFiles[i].filePath}`)

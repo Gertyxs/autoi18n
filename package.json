@@ -9,10 +9,27 @@
   "scripts": {},
   "dependencies": {},
   "devDependencies": {
+    "@babel/core": "^7.14.8",
+    "@babel/generator": "^7.14.8",
+    "@babel/plugin-proposal-optional-chaining": "^7.14.5",
+    "@babel/plugin-syntax-async-generators": "^7.8.4",
+    "@babel/plugin-syntax-class-properties": "^7.12.13",
+    "@babel/plugin-syntax-decorators": "^7.14.5",
+    "@babel/plugin-syntax-do-expressions": "^7.14.5",
+    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
+    "@babel/plugin-syntax-export-extensions": "^7.0.0-beta.32",
+    "@babel/plugin-syntax-function-bind": "^7.14.5",
+    "@babel/plugin-syntax-jsx": "^7.14.5",
+    "@babel/plugin-syntax-object-rest-spread": "^7.8.3",
+    "@babel/preset-typescript": "^7.14.5",
+    "@babel/traverse": "^7.14.8",
+    "@babel/types": "^7.14.8",
     "chalk": "^4.1.1",
     "commander": "^8.0.0",
+    "crypto-js": "^4.1.1",
     "glob": "^7.1.7",
     "inquirer": "^8.1.1",
-    "prettier": "^2.3.2"
+    "prettier": "^2.3.2",
+    "vue-template-compiler": "^2.6.14"
   }
 }
