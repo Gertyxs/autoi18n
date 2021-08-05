@@ -557,7 +557,7 @@ module.exports = function (webpackEnv) {
           ],
         },
         /**
-         * 配置自国际化loader 无侵入式
+         * 配置国际化loader 无侵入式
          */
         {
           enforce: 'pre', // 此项一定要加上 优先执行的loader

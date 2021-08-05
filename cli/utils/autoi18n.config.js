@@ -4,7 +4,7 @@ module.exports = {
    */
   language: ['zh-cn', 'en-us'],
   /**
-   * 国际化配置文件应用的 模块模式 根据这个模式 使用 module.exports 或者 export default
+   * 国际化资源文件应用的 模块模式 根据这个模式 使用 module.exports 或者 export default
    * 如果localeFileExt 配置为json时 此配置不起效
    */
   modules: 'es6',
@@ -13,7 +13,7 @@ module.exports = {
    */
   entry: ['./src'],
   /**
-   * 国际化配置文件输出目录
+   * 国际化资源文件输出目录
    */
   localePath: './src/locales',
   /**
