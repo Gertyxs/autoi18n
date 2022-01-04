@@ -1,6 +1,6 @@
 {
   "name": "autoi18n-tool",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "./loaders/index.js",
   "license": "MIT",
   "bin": {
@@ -37,7 +37,6 @@
     "crypto-js": "^4.1.1",
     "glob": "^7.1.7",
     "inquirer": "^8.1.1",
-    "prettier": "^2.3.2",
-    "vue-template-compiler": "^2.6.14"
+    "prettier": "^2.3.2"
   }
 }

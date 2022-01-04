@@ -5,7 +5,7 @@ module.exports = {
   localePath: './src/locales',
   localeFileExt: '.json',
   extensions: [],
-  exclude: [],
+  exclude: ['./src/locales/*.{js,ts,json}'],
   ignoreMethods: ['i18n.t', '$t'],
   ignoreTagAttr: ['class', 'style', 'src', 'href', 'width', 'height'],
   i18nObjectMethod: 'i18n.t',
