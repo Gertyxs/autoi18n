@@ -1,6 +1,6 @@
 # 自动国际化方案探究
 
-> [叶兴胜(opens new window)](https://github.com/Gertyxs)/ 2021-6-28
+> [叶兴胜](https://github.com/Gertyxs)/ 2021-8-30
 
 ## 前言
 
