@@ -20,6 +20,8 @@ module.exports = {
       } catch (err) {
         prettier = options.prettier
       }
+    } else {
+      prettier = options.prettier
     }
     let parser = 'babel'
     if (ext === '.vue') {

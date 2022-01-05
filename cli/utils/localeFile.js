@@ -7,9 +7,9 @@ const cwdPath = process.cwd()
 /**
  * 同步创建多级文件夹
  * @param {*} dirname 文件名
- * @returns 
+ * @returns
  */
-const mkdirMultipleSync = (dirname) => {
+const mkdirMultipleSync = dirname => {
   if (fs.existsSync(dirname)) {
     return true
   } else {
@@ -32,29 +32,25 @@ module.exports = class LocaleFile {
    * @param {object} options   自动国际化配置对象
    */
   createConf(values, locale, options) {
-    const folder = (
-      this.localesDir.startsWith('/')
-        ? this.localesDir
-        : path.join(cwdPath, this.localesDir)
-    );
+    const folder = this.localesDir.startsWith('/') ? this.localesDir : path.join(cwdPath, this.localesDir)
     try {
       fs.accessSync(folder)
     } catch (e) {
       mkdirMultipleSync(folder)
     }
     const localeFileExt = options.localeFileExt || '.json'
-    const configFilePath = path.join(folder, `${locale}${localeFileExt}`);
+    const configFilePath = path.join(folder, `${locale}${localeFileExt}`)
     return new Promise((resolve, reject) => {
       let moduleIdent = options.modules === 'commonjs' ? 'module.exports = ' : 'export default '
       moduleIdent = localeFileExt === '.json' ? '' : moduleIdent
       fs.writeFile(configFilePath, moduleIdent + JSON.stringify(values, null, 2), err => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          resolve(configFilePath);
+          resolve(configFilePath)
         }
-      });
-    });
+      })
+    })
   }
 
   /**
@@ -64,19 +60,15 @@ module.exports = class LocaleFile {
    */
   getConf(locale, options) {
     const localeFileExt = options.localeFileExt || '.json'
-    const configFilePath = path.join(cwdPath, this.localesDir, `${locale}${localeFileExt}`);
+    const configFilePath = path.join(cwdPath, this.localesDir, `${locale}${localeFileExt}`)
     let data = {}
     if (fs.existsSync(configFilePath)) {
       let content = fs.readFileSync(configFilePath, { encoding: 'utf-8' })
-      // 匹配大括号里面的内容
-      content = (content || '').match(/\{[\s\S]*\}/)
-      content = content ? content[0] : {}
-      // 将key value的单引号换成双引号 防止json格式化失败
-      content = content.replace(/(['"]?)(\w+)\1\s*:\s*(['"]?)(((?!,|\3)(.|\n|\r))+)\3/gm, (match, keySign, key, valueSign, value) => {
-        value = valueSign ? `"${value}"` : value
-        return `"${key}": ${value}`
-      })
-      data = content.length > 0 ? JSON.parse(content) : {}
+      // 去除导出标识符
+      content = (content || '').replace(/module\.exports\s*=\s*/, '').replace(/export default\s*/, '')
+      // eval主要是js的解析器封装函数
+      data = eval(`(${content})`)
+      data = data ? data : {}
     }
     return data
   }

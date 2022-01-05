@@ -1,6 +1,6 @@
 {
   "name": "autoi18n-tool",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "./loaders/index.js",
   "license": "MIT",
   "bin": {
@@ -15,9 +15,7 @@
   },
   "author": "Gertyxs <gertyxs@outlook.com>",
   "scripts": {},
-  "dependencies": {},
-  "peerDependencies": {},
-  "devDependencies": {
+  "dependencies": {
     "@babel/core": "^7.14.8",
     "@babel/generator": "^7.14.8",
     "@babel/plugin-proposal-optional-chaining": "^7.14.5",
@@ -39,5 +37,7 @@
     "glob": "^7.1.7",
     "inquirer": "^8.1.1",
     "prettier": "^2.3.2"
-  }
+  },
+  "peerDependencies": {},
+  "devDependencies": {}
 }
