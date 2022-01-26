@@ -3,10 +3,11 @@ const transformReact = require('./transformReact')
 const transformJs = require('./transformJs')
 
 /**
- * @param {*} options.code 源代码 
- * @param {*} options.targetFile 文件对象 
- * @param {*} options.options 国际化配置对象 
- * @param {*} options.messages 国际化字段对象 
+ * 处理不同的文件转换
+ * @param {*} options.code 源代码
+ * @param {*} options.targetFile 文件对象
+ * @param {*} options.options 国际化配置对象
+ * @param {*} options.messages 国际化字段对象
  * @returns code 经过国际化的代码
  */
 module.exports = function ({ code, targetFile, options, messages }) {

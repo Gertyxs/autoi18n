@@ -18,7 +18,7 @@ module.exports = {
     // 转义字符串
     ignoreMethods = ignoreMethods.map((item) => baseUtils.stringRegEscape(item))
     const ident = ignoreMethods.join('|')
-    sourceCode = sourceCode.replace(new RegExp(`(${ident})\\([^\\(]+?\\)`, 'gm'), (match) => {
+    sourceCode = sourceCode.replace(new RegExp(`(${ident})\\([^(]+?\\)`, 'gm'), (match) => {
       let i18nFieldKey = `__i18n_field_${i18nFieldIndex++}__()`
       this.i18nFieldCache[i18nFieldKey] = match
       return i18nFieldKey

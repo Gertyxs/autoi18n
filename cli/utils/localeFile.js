@@ -55,12 +55,16 @@ module.exports = class LocaleFile {
 
   /**
    * 获取配置值
-   * @param {string} locale  key
+   * @param {string} locale    key
    * @param {object} options   自动国际化配置对象
+   * @param {object} fullPath  完整路劲
    */
-  getConf(locale, options) {
+  getConf(locale, options, fullPath) {
     const localeFileExt = options.localeFileExt || '.json'
-    const configFilePath = path.join(cwdPath, this.localesDir, `${locale}${localeFileExt}`)
+    let configFilePath = this.localesDir.startsWith('/') ? `${this.localesDir.replace(/\/$/, '')}/${locale}${localeFileExt}` : path.join(cwdPath, this.localesDir, `${locale}${localeFileExt}`)
+    if (fullPath) {
+      configFilePath =  fullPath.startsWith('/') ? fullPath : path.join(cwdPath, fullPath)
+    }
     let data = {}
     if (fs.existsSync(configFilePath)) {
       let content = fs.readFileSync(configFilePath, { encoding: 'utf-8' })

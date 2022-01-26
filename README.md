@@ -1,5 +1,7 @@
 # autoi18n
 
+[![](https://img.shields.io/badge/npm-v1.0.5-blue)](https://github.com/Gertyxs/autoi18n/tree/main)
+
 ## 介绍
 
 1. 自动转换、基于`Command`或者`webpack loader`的前端国际化方案
@@ -121,6 +123,7 @@ Hello, world
 npx autoi18n init # 初始化自动国际化配置，这个命令会生成国际化配置文件和生成国际化资源文件
 npx autoi18n sync # 同步国际化资源文件
 npx autoi18n sync -r # 同步国际化资源文件并且会写入源文件 注意：这个命令会修改源码 -r 其实就是 replace 是否替换国际化字段
+npx autoi18n restore -f ./src/locales/zh-cn.ts # 根据指定的配置文件恢复代码中的国际化文案 如果存在多余的国际化文案数据，可以先恢复，重新执行 npx autoi18n sync -r 自动国际化操作，就不用手动去除多余的字段了
 npx autoi18n -h # 查看使用帮助
 npx autoi18n -V # 查看版本
 ```

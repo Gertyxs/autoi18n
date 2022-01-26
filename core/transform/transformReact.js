@@ -4,12 +4,13 @@ const ast = require('./ast')
 const baseUtils = require('../utils/baseUtils')
 
 /**
- * @param {*} options.code 源代码 
- * @param {*} options.options 国际化配置对象 
- * @param {*} options.file 文件对象 
- * @param {*} options.messages 国际化字段对象 
- * @param {*} options.ext 文件类型 
- * @returns 
+ * 转换react
+ * @param {*} options.code 源代码
+ * @param {*} options.options 国际化配置对象
+ * @param {*} options.file 文件对象
+ * @param {*} options.messages 国际化字段对象
+ * @param {*} options.ext 文件类型
+ * @returns
  */
 module.exports = function ({ code, file, options, messages, ext = '.jsx' }) {
   // 复制一份国际化数据配置

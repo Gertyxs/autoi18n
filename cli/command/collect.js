@@ -5,12 +5,11 @@ const log = require('../utils/log')
 const baseUtils = require('../utils/baseUtils')
 const { transform } = require('../../core/index')
 const LocaleFile = require('../utils/localeFile')
-/**
- * 
- * @param {*} programOption 命令行参数
- * @param {*} needReplace 是否需要替换国际化字段
- */
 
+/**
+ * 同步国际化配置文件并替换为对应的国际化字段
+ * @param {*} programOption 命令行参数
+ */
 module.exports = async function (programOption) {
   // 合并配置文件
   const options = mergeIi8nConfig(programOption)

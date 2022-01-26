@@ -117,6 +117,7 @@ const matchVueJs = ({ code, options, file, ext, messages }) => {
 }
 
 /**
+ * 转换vue
  * @param {*} options.code 源代码
  * @param {*} options.file 文件对象
  * @param {*} options.options 国际化配置对象
