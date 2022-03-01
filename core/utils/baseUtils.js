@@ -55,5 +55,58 @@ module.exports = {
    */
   formatWhitespace(str) {
     return str.trim().replace(/\s+/g, ' ')
+  },
+  /**
+   * 处理嵌套的html标签 可以 返回多段 主要处理vue3有多段script的问题
+   * @param options.code 需要匹配html的字符串
+   * @param options.tagName 需要匹配html 标签名称 如果传 默认匹配所有标签
+   * @param cb 匹配成功的回调
+   */
+  handleNestedTags({ code, tagName }, cb) {
+    tagName = tagName ? tagName : '\\w*'
+    // 标签编号对象
+    let tagsNo = {}
+    // 开始标签编号
+    code = code.replace(
+      new RegExp(`(<(${tagName})((?:\\s+[^>]*)|)>)|(<\\/(${tagName})>)|(<(${tagName})((?:\\s+[^>]*)|)\\/>)`, 'gim'),
+      (match, startTag, starTagName, startTagCon, endTag, endTagName, closeTag, closeTagName, closeTagCon) => {
+        // 如果是闭合标签  <img /> 类似这种
+        let value = ''
+        if (closeTag) {
+          value = `<${closeTagName + '%%_0'}${closeTagCon || ''}/>`
+        }
+        // 开始标签
+        if (startTag) {
+          if (tagsNo[starTagName] === undefined) {
+            tagsNo[starTagName] = 0
+          }
+          value = `<${starTagName + '%%_' + tagsNo[starTagName]}${startTagCon || ''}>`
+          if (tagsNo[starTagName] !== undefined) {
+            tagsNo[starTagName] += 1 // 开始标签 进行 加一
+          }
+        }
+        // 结束标签
+        if (endTag) {
+          if (tagsNo[endTagName] === undefined) {
+            tagsNo[endTagName] = 0
+          }
+          if (tagsNo[endTagName] !== undefined) {
+            tagsNo[endTagName] -= 1 // 结束标签存在 匹配对减一
+          }
+          value = `</${endTagName + '%%_' + tagsNo[endTagName]}>`
+        }
+        return value
+      }
+    )
+    // 编号完成 进行匹配 这里获取顶级的标签 编号为0
+    code = code.replace(new RegExp(`<(${tagName}%%_0)((?:\\s+[^>]*)|)>[\\s\\S]*?<\\/\\1>|<(${tagName}%%_0)((?:\\s+[^>]*)|)\\/*>`, 'gim'), match => {
+      // 编号完成清除标签的编号
+      match = match.replace(new RegExp(`(<(${tagName}%%_\\-?\\d+)((?:\\s+[^>]*)|)\\/?>)|(<\\/(${tagName}%%_\\-?\\d+)>)`, 'gim'), match => {
+        return match.replace(/%%_\d+/, '')
+      })
+      return cb ? cb(match) : match
+    })
+    tagsNo = {}
+    return code
   }
 }

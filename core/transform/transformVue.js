@@ -2,6 +2,7 @@ const transformJs = require('./transformJs')
 const cacheCommentHtml = require('../utils/cacheCommentHtml')
 const cacheI18nField = require('../utils/cacheI18nField')
 const { matchStringTpl, matchString } = require('./transform')
+const baseUtils = require('../utils/baseUtils')
 
 /**
  * 匹配vue标签中的属性
@@ -108,8 +109,8 @@ const matchVueTemplate = ({ code, options, ext, messages }) => {
 const matchVueJs = ({ code, options, file, ext, messages }) => {
   // 获取vue文件里面的script模板
   code = code.replace(/(<script[^>]*>)([\s\S]*)(<\/script>)/gim, (match, startTag, content, endTag) => {
-    let lang = startTag.match(/lang="(.+)"/)
-    lang = lang && lang[1] ? lang[1] : 'js'
+    let lang = startTag.match(/lang=(['"])(((?!\1).)+)\1/)
+    lang = lang && lang[2] ? lang[2] : 'js'
     content = transformJs({ code: content, file, options, ext, codeType: 'vueJs', messages, lang })
     return `${startTag}${content.trim()}${endTag}`
   })
@@ -127,8 +128,12 @@ const matchVueJs = ({ code, options, file, ext, messages }) => {
  */
 module.exports = function ({ code, file, options, ext = '.vue', messages }) {
   // 处理模板
-  code = matchVueTemplate({ code, options, ext, messages })
+  code = baseUtils.handleNestedTags({ code, tagName: 'template' }, code => {
+    return matchVueTemplate({ code, options, ext, messages })
+  })
   // 处理js
-  code = matchVueJs({ code, file, options, ext, messages })
+  code = baseUtils.handleNestedTags({ code, tagName: 'script' }, code => {
+    return matchVueJs({ code, file, options, ext, messages })
+  })
   return code
 }
