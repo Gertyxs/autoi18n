@@ -2,13 +2,13 @@ const { md5, formatWhitespace } = require('../utils/baseUtils')
 
 /**
  * 设置替换
- * @param {*} code 
+ * @param {*} code
  */
- const replaceStatement = ({ value, options, messages, ext, codeType, sign = '\'' }) => {
+const replaceStatement = ({ value, options, messages, ext, codeType, sign = "'" }) => {
   // 去掉首尾空白字符，中间的连续空白字符替换成一个空格
   value = formatWhitespace(value)
   // 生成key
-  let key = md5(value)
+  let key = md5(value, options.maxLenKey)
   // 是否自定义key
   if (options.setMessageKey && typeof options.setMessageKey === 'function') {
     key = options.setMessageKey({ key, value })
@@ -31,15 +31,19 @@ const { md5, formatWhitespace } = require('../utils/baseUtils')
 
 /**
  * 匹配字符串模块
- * @param {*} code 
+ * @param {*} code
  */
 const matchStringTpl = ({ code, options, messages, codeType, ext }) => {
   // 匹配存在中文的字符串模板内容
   code = code.replace(/(`)(((?!\1).)*[\u4e00-\u9fa5]+((?!\1).)*)\1/g, (match, sign, value) => {
     // 匹配占位符外面的内容
-    const outValues = value.replace('`', '').replace(/(\${)([^}]+)(})/gm, ',,').split(',,').filter((item) => item)
+    const outValues = value
+      .replace('`', '')
+      .replace(/(\${)([^}]+)(})/gm, ',,')
+      .split(',,')
+      .filter(item => item)
     outValues.forEach(item => {
-      value = value.replace(item, (value) => {
+      value = value.replace(item, value => {
         // 是否是中文
         if (/[\u4e00-\u9fa5]+/g.test(value)) {
           value = `\${'${value}'}`
@@ -47,14 +51,14 @@ const matchStringTpl = ({ code, options, messages, codeType, ext }) => {
         return value
       })
     })
-    return `${sign}${value}${sign}`;
+    return `${sign}${value}${sign}`
   })
   return code
 }
 
 /**
  * 匹配普通字符串
- * @param {*} code 
+ * @param {*} code
  */
 const matchString = ({ code, options, messages, ext, codeType }) => {
   // 替换所有包含中文的普通字符串

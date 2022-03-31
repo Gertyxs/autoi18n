@@ -50,6 +50,10 @@ module.exports = {
    */
   setMessageKey: false,
   /**
+   * 生成md5的key长度 true: 32位字符 false: 16位字符
+   */
+  maxLenKey: false,
+  /**
    * 国际化要注入到js里面的实例 会在js文件第一行注入
    */
   i18nInstance: "import i18n from '~/i18n'",

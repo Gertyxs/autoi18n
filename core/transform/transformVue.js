@@ -80,7 +80,7 @@ const transformAst = ({ file, options, ext, messages }, nodes, isRoot) => {
       }
     }
     // 递归节点
-    if (!['script'].includes(node.type) && node.children && node.children.length > 0) {
+    if (!['script', 'style'].includes(node.type) && node.name !== 'textarea' && node.children && node.children.length > 0) {
       transformAst({ file, options, ext, messages }, node.children, false)
     }
     if (node.type === 'tag') {

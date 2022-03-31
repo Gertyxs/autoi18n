@@ -12,8 +12,12 @@ module.exports = {
    * md5加密
    * @param value 加密参数
    */
-  md5(value) {
-    return md5(value).toString()
+  md5(value, maxLenKey) {
+    let ciphertext = md5(value).toString()
+    if (!maxLenKey) {
+      ciphertext = ciphertext.substring(8, 24)
+    }
+    return ciphertext
   },
   /**
    * 匹配是否导入某个模块 es6 模式

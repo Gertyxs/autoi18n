@@ -1,6 +1,6 @@
 # autoi18n
 
-[![](https://img.shields.io/badge/npm-v1.0.6-blue)](https://www.npmjs.com/package/autoi18n-tool)
+[![](https://img.shields.io/badge/npm-v1.0.7-blue)](https://www.npmjs.com/package/autoi18n-tool)
 
 ## 介绍
 
@@ -182,6 +182,10 @@ module.exports = {
    * 默认为 false 不自定义 
    */
   setMessageKey: false,
+  /**
+   * 生成md5的key长度 true: 32位字符 false: 16位字符
+   */
+  maxLenKey: false,
   /**
    * 国际化要注入到js里面的实例 会在js文件第一行注入
    */
