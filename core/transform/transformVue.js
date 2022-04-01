@@ -10,10 +10,16 @@ const matchTagAttr = ({ options, ext, codeType, messages, node }) => {
   const attribs = {}
   for (const attr in node.attribs) {
     let value = node.attribs[attr]
-    if (attr.match(/^(v-|@)/) || options.ignoreTagAttr.includes(attr.trim())) {
+    // 如果内容存在中文才进行处理
+    if (/[\s\S]*([\u4e00-\u9fa5]+)[\s\S]*/gim.test(value)) {
       // 对于已经是v-开头的以及白名单内的属性，不进行替换
-      attribs[attr] = value
-    } else {
+      if (attr.match(/^(v-|@)/) || options.ignoreTagAttr.includes(attr.trim())) {
+        attribs[attr] = value
+      }
+      // 如果不是动态属性设置为动态属性
+      if (attr.indexOf(':') !== 0 && attr.indexOf('v-bind:') !== 0 && attr.indexOf('#') !== 0) {
+        attribs[`:${attr}`] = `'${value}'`
+      }
       // 处理值中存在中文的字符
       value = value.replace(/[\s\S]*([\u4e00-\u9fa5]+)[\s\S]*/gim, match => {
         // 匹配字符串模板
@@ -22,13 +28,8 @@ const matchTagAttr = ({ options, ext, codeType, messages, node }) => {
         match = matchString({ code: match, options, messages, codeType, ext })
         return match
       })
-      if (attr.indexOf(':') === 0 || attr.indexOf('v-bind:') === 0) {
-        const name = attr.split(':')[1]
-        attribs[`:${name}`] = `${value}`
-      } else {
-        attribs[`:${attr}`] = `'${node.attribs[attr]}'`
-      }
     }
+    attribs[attr] = value
   }
   node.attribs = attribs
 }
@@ -38,27 +39,31 @@ const matchTagAttr = ({ options, ext, codeType, messages, node }) => {
  */
 const matchTagContent = ({ options, ext, codeType, messages, node }) => {
   let value = node.data
-  let outValues = value
-    .replace(/({{)(((?!\1|}}).)+)(}})/gm, ',,')
-    .split(',,')
-    .filter(item => item)
-  outValues.forEach(item => {
-    value = value.replace(item, value => {
-      // 是否是中文
-      if (/[\u4e00-\u9fa5]+/g.test(value)) {
-        value = `{{'${value.trim()}'}}`
-      }
-      return value
+  // 存在中文才处理
+  if (/[\s\S]*([\u4e00-\u9fa5]+)[\s\S]*/gim.test(value)) {
+    // 将所有不在 {{}} 内的内容，用 {{}} 包裹起来
+    let outValues = value
+      .replace(/({{)(((?!\1|}}).)+)(}})/gm, ',,')
+      .split(',,')
+      .filter(item => item)
+    outValues.forEach(item => {
+      value = value.replace(item, value => {
+        // 是否是中文
+        if (/[\u4e00-\u9fa5]+/g.test(value)) {
+          value = `{{'${value.trim()}'}}`
+        }
+        return value
+      })
     })
-  })
-  // 对所有的{{}}内的内容进行国际化替换
-  value = value.replace(/({{)((?:(?!\1|}}).)+)(}})/gm, (match, beforeSign, value, afterSign) => {
-    // 匹配字符串模板
-    value = matchStringTpl({ code: value, options, messages, codeType, ext })
-    // 进行字符串匹配替换
-    value = matchString({ code: value, options, messages, codeType, ext })
-    return `${beforeSign}${value.trim()}${afterSign}`
-  })
+    // 对所有的{{}}内的内容进行国际化替换
+    value = value.replace(/({{)((?:(?!\1|}}).)+)(}})/gm, (match, beforeSign, value, afterSign) => {
+      // 匹配字符串模板
+      value = matchStringTpl({ code: value, options, messages, codeType, ext })
+      // 进行字符串匹配替换
+      value = matchString({ code: value, options, messages, codeType, ext })
+      return `${beforeSign}${value.trim()}${afterSign}`
+    })
+  }
   node.data = value
 }
 
@@ -104,7 +109,7 @@ const transformAst = ({ file, options, ext, messages }, nodes, isRoot) => {
  * @returns
  */
 module.exports = function ({ code, file, options, ext = '.vue', messages }) {
-  const ast = parse.parseDocument(code, { xmlMode: false, recognizeCDATA: false, recognizeSelfClosing: false, lowerCaseTags: false, lowerCaseAttributeNames: false })
+  const ast = parse.parseDocument(code, { xmlMode: false, recognizeCDATA: false, recognizeSelfClosing: false, lowerCaseTags: false, lowerCaseAttributeNames: false, recognizeSelfClosing: true })
   // 转换ast节点
   transformAst({ file, options, ext, messages }, ast.children, true)
   // 将转换完成的节点渲染成html返回

@@ -7,7 +7,9 @@
     "autoi18n": "./cli/bin/index.js"
   },
   "keywords": [
+    "i18n",
     "autoi18n",
+    "auto-i18n",
     "autoi18n-tool"
   ],
   "repository": {
