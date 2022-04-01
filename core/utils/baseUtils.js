@@ -66,7 +66,7 @@ module.exports = {
    * @param options.tagName 需要匹配html 标签名称 如果传 默认匹配所有标签
    * @param cb 匹配成功的回调
    */
-  handleNestedTags({ code, tagName }, cb) {
+   handleNestedTags({ code, tagName }, cb) {
     tagName = tagName ? tagName : '\\w*'
     // 标签编号对象
     let tagsNo = {}

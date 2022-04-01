@@ -1,48 +1,58 @@
 const transformJs = require('./transformJs')
+const cacheCommentHtml = require('../utils/cacheCommentHtml')
+const cacheI18nField = require('../utils/cacheI18nField')
 const { matchStringTpl, matchString } = require('./transform')
-const parse = require('htmlparser2')
-const render = require('dom-serializer').default
+const baseUtils = require('../utils/baseUtils')
 
 /**
  * 匹配vue标签中的属性
+ * @param {*} code
  */
-const matchTagAttr = ({ options, ext, codeType, messages, node }) => {
-  const attribs = {}
-  for (const attr in node.attribs) {
-    let value = node.attribs[attr]
-    // 如果内容存在中文才进行处理
-    if (/[\s\S]*([\u4e00-\u9fa5]+)[\s\S]*/gim.test(value)) {
-      // 对于已经是v-开头的以及白名单内的属性，不进行替换
+const matchTagAttr = ({ code, options, ext, codeType, messages }) => {
+  code = code.replace(/(<[^\/\s]+)([^<>]+)(\/?>)/gm, (match, startTag, attrs, endTag) => {
+    // 属性设置成vue的动态绑定
+    attrs = attrs.replace(/([^\s]+)=(["'])(((?!\2).)*[\u4e00-\u9fa5]+((?!\2).)*)\2/gim, (match, attr, sign, value) => {
       if (attr.match(/^(v-|@)/) || options.ignoreTagAttr.includes(attr.trim())) {
-        attribs[attr] = value
-      }
-      // 如果不是动态属性设置为动态属性
-      if (attr.indexOf(':') !== 0 && attr.indexOf('v-bind:') !== 0 && attr.indexOf('#') !== 0) {
-        attribs[`:${attr}`] = `'${value}'`
-      }
-      // 处理值中存在中文的字符
-      value = value.replace(/[\s\S]*([\u4e00-\u9fa5]+)[\s\S]*/gim, match => {
-        // 匹配字符串模板
-        match = matchStringTpl({ code: match, options, messages, codeType, ext })
-        // 进行字符串匹配替换
-        match = matchString({ code: match, options, messages, codeType, ext })
+        // 对于已经是v-开头的以及白名单内的属性，不进行替换
         return match
-      })
-    }
-    attribs[attr] = value
-  }
-  node.attribs = attribs
+      }
+      if (attr.indexOf(':') === 0) {
+        // 对所有:开头的属性替换为v-bind: 模式
+        return `v-bind${attr}=${sign}${value}${sign}`
+      } else if(attr.indexOf('#') === 0) {
+        return `${attr}=${sign}${value}${sign}`
+      } else {
+        // 对所有的字符串属性替换为v-bind:模式
+        if (!['true', 'false'].includes(value) && isNaN(value)) {
+          value = sign === '"' ? `'${value}'` : `"${value}"`
+        }
+        return `v-bind:${attr}=${sign}${value}${sign}`
+      }
+    })
+    // 通过对v-bind属性中包含有中文的部分进行国际化替换
+    attrs = attrs.replace(/(v-bind:[^=]+=)(['"])(((?!\2).)+[\u4e00-\u9fa5]+((?!\2).)+)\2/gim, (match, attr, sign, value) => {
+      // value = ast({ code: value, options, messages, ext }) // 防止性能问题 改用正则匹配
+      // 匹配字符串模板
+      value = matchStringTpl({ code: value, options, messages, codeType, ext })
+      // 进行字符串匹配替换
+      value = matchString({ code: value, options, messages, codeType, ext })
+      // 替换属性为简写模式
+      attr = attr.replace('v-bind:', ':')
+      return `${attr}${sign}${value}${sign}`
+    })
+    return `${startTag}${attrs}${endTag}`
+  })
+  return code
 }
 
 /**
  * 匹配查找标签内容（包含中文的内容）
+ * @param {*} code
  */
-const matchTagContent = ({ options, ext, codeType, messages, node }) => {
-  let value = node.data
-  // 存在中文才处理
-  if (/[\s\S]*([\u4e00-\u9fa5]+)[\s\S]*/gim.test(value)) {
+const matchTagContent = ({ code, options, ext, codeType, messages }) => {
+  code = code.replace(/(>)([^><]*[\u4e00-\u9fa5]+[^><]*)(<)/gm, (match, beforeSign, value, afterSign) => {
     // 将所有不在 {{}} 内的内容，用 {{}} 包裹起来
-    let outValues = value
+    const outValues = value
       .replace(/({{)(((?!\1|}}).)+)(}})/gm, ',,')
       .split(',,')
       .filter(item => item)
@@ -57,46 +67,56 @@ const matchTagContent = ({ options, ext, codeType, messages, node }) => {
     })
     // 对所有的{{}}内的内容进行国际化替换
     value = value.replace(/({{)((?:(?!\1|}}).)+)(}})/gm, (match, beforeSign, value, afterSign) => {
+      // value = ast({ code: value, options, messages, ext }) // 防止性能问题 改用正则匹配
       // 匹配字符串模板
       value = matchStringTpl({ code: value, options, messages, codeType, ext })
       // 进行字符串匹配替换
       value = matchString({ code: value, options, messages, codeType, ext })
       return `${beforeSign}${value.trim()}${afterSign}`
     })
-  }
-  node.data = value
+    return `${beforeSign}${value.trim()}${afterSign}`
+  })
+  return code
 }
 
 /**
- * 递归转换ast
- * @param {*} nodes ast 节点数据
- * @param {*} isRoot 是否是顶层遍历
- * @returns
+ * 匹配vue模板部分
+ * @param {*} code
  */
-const transformAst = ({ file, options, ext, messages }, nodes, isRoot) => {
-  nodes.forEach(node => {
-    // 转换js
-    if (isRoot && node.type === 'script') {
-      const lang = node.attribs.lang || 'js'
-      if (node.children && node.children.length > 0) {
-        let textNode = node.children[0]
-        const content = transformJs({ code: textNode.data, file, options, ext, codeType: 'vueJs', messages, lang })
-        textNode.data = content
-      }
-    }
-    // 递归节点
-    if (!['script', 'style'].includes(node.type) && node.name !== 'textarea' && node.children && node.children.length > 0) {
-      transformAst({ file, options, ext, messages }, node.children, false)
-    }
-    if (node.type === 'tag') {
-      // 匹配模板里面待中文的属性 匹配属性
-      matchTagAttr({ node, options, ext, codeType: 'vueTag', messages })
-    }
-    if (node.type === 'text') {
-      // 匹配模板里面标签包含中文的内容 匹配内容
-      matchTagContent({ node, options, ext, codeType: 'vueTag', messages })
-    }
+const matchVueTemplate = ({ code, options, ext, messages }) => {
+  // 暂存注释
+  code = cacheCommentHtml.stash(code, options)
+  // 暂存已经设置的国际化字段
+  code = cacheI18nField.stash(code, options)
+  // 开始匹配
+  code = code.replace(/(<template[^>]*>)([\s\S]*)(<\/template>)/gim, (match, startTag, content, endTag) => {
+    // 匹配模板里面待中文的属性 匹配属性
+    content = matchTagAttr({ code: content, options, ext, codeType: 'vueTag', messages })
+    // 匹配模板里面标签包含中文的内容 匹配内容
+    content = matchTagContent({ code: content, options, ext, codeType: 'vueTag', messages })
+    return `${startTag}${content.trim()}${endTag}`
   })
+
+  // 恢复注释
+  code = cacheCommentHtml.restore(code, options)
+  // 恢复已经设置的国际化字段
+  code = cacheI18nField.restore(code, options)
+  return code
+}
+
+/**
+ * 匹配vue JavaScript部分
+ * @param {*} code
+ */
+const matchVueJs = ({ code, options, file, ext, messages }) => {
+  // 获取vue文件里面的script模板
+  code = code.replace(/(<script[^>]*>)([\s\S]*)(<\/script>)/gim, (match, startTag, content, endTag) => {
+    let lang = startTag.match(/lang=(['"])(((?!\1).)+)\1/)
+    lang = lang && lang[2] ? lang[2] : 'js'
+    content = transformJs({ code: content, file, options, ext, codeType: 'vueJs', messages, lang })
+    return `${startTag}${content.trim()}${endTag}`
+  })
+  return code
 }
 
 /**
@@ -109,10 +129,13 @@ const transformAst = ({ file, options, ext, messages }, nodes, isRoot) => {
  * @returns
  */
 module.exports = function ({ code, file, options, ext = '.vue', messages }) {
-  const ast = parse.parseDocument(code, { xmlMode: false, recognizeCDATA: false, recognizeSelfClosing: false, lowerCaseTags: false, lowerCaseAttributeNames: false, recognizeSelfClosing: true })
-  // 转换ast节点
-  transformAst({ file, options, ext, messages }, ast.children, true)
-  // 将转换完成的节点渲染成html返回
-  code = render(ast, { xmlMode: false, decodeEntities: false })
+  // 处理模板
+  code = baseUtils.handleNestedTags({ code, tagName: 'template' }, code => {
+    return matchVueTemplate({ code, options, ext, messages })
+  })
+  // 处理js
+  code = baseUtils.handleNestedTags({ code, tagName: 'script' }, code => {
+    return matchVueJs({ code, file, options, ext, messages })
+  })
   return code
 }

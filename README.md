@@ -1,6 +1,6 @@
 # autoi18n
 
-[![](https://img.shields.io/badge/npm-v1.0.7-blue)](https://www.npmjs.com/package/autoi18n-tool)
+[![](https://img.shields.io/badge/npm-v1.0.8-blue)](https://www.npmjs.com/package/autoi18n-tool)
 
 ## 介绍
 
